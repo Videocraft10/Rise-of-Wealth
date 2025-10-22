@@ -16,6 +16,10 @@ extends CharacterBody3D
 @export var sprint_speed : float = 6.0
 ## The speed that the character moves at when crouching.
 @export var crouch_speed : float = 1.0
+## The base speed when in freefly/noclip mode.
+@export var freefly_speed : float = 5.0
+## The speed multiplier when sprinting in freefly/noclip mode.
+@export var freefly_sprint_multiplier : float = 2.0
 
 ## How fast the character speeds up and slows down when Motion Smoothing is on.
 @export var acceleration : float = 10.0
@@ -65,7 +69,8 @@ extends CharacterBody3D
 	JUMP = "ui_accept",
 	CROUCH = "crouch",
 	SPRINT = "sprint",
-	PAUSE = "ui_cancel"
+	PAUSE = "ui_cancel",
+	FREEFLY = "freefly"
 	}
 @export_subgroup("Controller Specific")
 ## This only affects how the camera is handled, the rest should be covered by adding controller inputs to the existing actions in the Input Map.
@@ -99,6 +104,12 @@ extends CharacterBody3D
 @export var crouch_enabled : bool = true
 ## Toggles the crouch state when button is pressed or requires the player to hold the button down to remain crouched.
 @export_enum("Hold to Crouch", "Toggle Crouch") var crouch_mode : int = 0
+## Enables or disables noclip/freefly mode.
+@export var noclip_enabled : bool = true
+## The Y position below which the player will be respawned. Set to a very low value to disable.
+@export var kill_plane_y : float = -50.0
+## The position where the player will respawn when falling below the kill plane.
+@export var respawn_position : Vector3 = Vector3.ZERO
 ## Wether sprinting should effect FOV.
 @export var dynamic_fov : bool = true
 ## If the player holds down the jump button, should the player keep hopping.
@@ -121,10 +132,11 @@ extends CharacterBody3D
 # These are variables used in this script that don't need to be exposed in the editor.
 var speed : float = base_speed
 var current_speed : float = 0.0
-# States: normal, crouching, sprinting
+# States: normal, crouching, sprinting, noclip
 var state : String = "normal"
 var low_ceiling : bool = false # This is for when the ceiling is too low and the player needs to crouch.
 var was_on_floor : bool = true # Was the player on the floor last frame (for landing animation)
+var noclip_active : bool = false # Is noclip mode currently active
 
 # The reticle should always have a Control node as the root
 var RETICLE : Control
@@ -168,13 +180,18 @@ func _process(_delta):
 
 
 func _physics_process(delta): # Most things happen here.
+	# Handle noclip toggle
+	if noclip_enabled and Input.is_action_just_pressed(controls.FREEFLY):
+		toggle_noclip()
+	
 	# Gravity
 	if dynamic_gravity:
 		gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
-	if not is_on_floor() and gravity and gravity_enabled:
+	if not is_on_floor() and gravity and gravity_enabled and not noclip_active:
 		velocity.y -= gravity * delta
 
-	handle_jumping()
+	if not noclip_active:
+		handle_jumping()
 
 	var input_dir = Vector2.ZERO
 
@@ -199,6 +216,10 @@ func _physics_process(delta): # Most things happen here.
 		play_jump_animation()
 
 	update_debug_menu_per_tick()
+	
+	# Check if player has fallen below kill plane
+	if global_position.y < kill_plane_y:
+		respawn_player()
 
 	was_on_floor = is_on_floor() # This must always be at the end of physics_process
 
@@ -223,23 +244,57 @@ func handle_jumping():
 func handle_movement(delta, input_dir):
 	var direction = input_dir.rotated(-HEAD.rotation.y)
 	direction = Vector3(direction.x, 0, direction.y)
-	move_and_slide()
+	
+	if noclip_active:
+		# Noclip movement - fly in the direction the camera is facing
+		var cam_basis = HEAD.get_global_transform().basis
+		var fly_direction = Vector3.ZERO
+		
+		if Input.is_action_pressed(controls.FORWARD):
+			fly_direction -= cam_basis.z
+		if Input.is_action_pressed(controls.BACKWARD):
+			fly_direction += cam_basis.z
+		if Input.is_action_pressed(controls.LEFT):
+			fly_direction -= cam_basis.x
+		if Input.is_action_pressed(controls.RIGHT):
+			fly_direction += cam_basis.x
+		if Input.is_action_pressed(controls.JUMP):
+			fly_direction += Vector3.UP
+		if Input.is_action_pressed(controls.CROUCH):
+			fly_direction -= Vector3.UP
+		
+		if fly_direction.length() > 0:
+			fly_direction = fly_direction.normalized()
+		
+		# Apply sprint multiplier if sprint is pressed
+		var current_freefly_speed = freefly_speed
+		if Input.is_action_pressed(controls.SPRINT):
+			current_freefly_speed *= freefly_sprint_multiplier
+		
+		if motion_smoothing:
+			velocity = lerp(velocity, fly_direction * current_freefly_speed, acceleration * delta)
+		else:
+			velocity = fly_direction * current_freefly_speed
+		
+		move_and_slide()
+	else:
+		move_and_slide()
 
-	if in_air_momentum:
-		if is_on_floor():
+		if in_air_momentum:
+			if is_on_floor():
+				if motion_smoothing:
+					velocity.x = lerp(velocity.x, direction.x * speed, acceleration * delta)
+					velocity.z = lerp(velocity.z, direction.z * speed, acceleration * delta)
+				else:
+					velocity.x = direction.x * speed
+					velocity.z = direction.z * speed
+		else:
 			if motion_smoothing:
 				velocity.x = lerp(velocity.x, direction.x * speed, acceleration * delta)
 				velocity.z = lerp(velocity.z, direction.z * speed, acceleration * delta)
 			else:
 				velocity.x = direction.x * speed
 				velocity.z = direction.z * speed
-	else:
-		if motion_smoothing:
-			velocity.x = lerp(velocity.x, direction.x * speed, acceleration * delta)
-			velocity.z = lerp(velocity.z, direction.z * speed, acceleration * delta)
-		else:
-			velocity.x = direction.x * speed
-			velocity.z = direction.z * speed
 
 
 func handle_head_rotation():
@@ -295,12 +350,19 @@ func check_controls(): # If you add a control, you might want to add a check for
 	if !InputMap.has_action(controls.SPRINT):
 		push_error("No control mapped for sprint. Please add an input map control. Disabling sprinting.")
 		sprint_enabled = false
+	if !InputMap.has_action(controls.FREEFLY):
+		push_error("No control mapped for freefly. Please add an input map control. Disabling noclip.")
+		noclip_enabled = false
 
 #endregion
 
 #region State Handling
 
 func handle_state(moving):
+	# Can't sprint or crouch while in noclip
+	if noclip_active:
+		return
+	
 	if sprint_enabled:
 		if sprint_mode == 0:
 			if Input.is_action_pressed(controls.SPRINT) and state != "crouching":
@@ -366,6 +428,21 @@ func enter_sprint_state():
 	state = "sprinting"
 	speed = sprint_speed
 
+func toggle_noclip():
+	noclip_active = !noclip_active
+	if noclip_active:
+		# Entering noclip mode
+		set_collision_layer_value(1, false)
+		set_collision_mask_value(1, false)
+		state = "noclip"
+		velocity = Vector3.ZERO
+	else:
+		# Exiting noclip mode
+		set_collision_layer_value(1, true)
+		set_collision_mask_value(1, true)
+		enter_normal_state()
+		velocity = Vector3.ZERO
+
 #endregion
 
 #region Animation Handling
@@ -427,7 +504,9 @@ func play_jump_animation():
 func update_debug_menu_per_frame():
 	$UserInterface/DebugPanel.add_property("FPS", Performance.get_monitor(Performance.TIME_FPS), 0)
 	var status : String = state
-	if !is_on_floor():
+	if noclip_active:
+		status = "noclip"
+	elif !is_on_floor():
 		status += " in the air"
 	$UserInterface/DebugPanel.add_property("State", status, 4)
 
@@ -486,5 +565,9 @@ func handle_pausing():
 			Input.MOUSE_MODE_VISIBLE:
 				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 				#get_tree().paused = false
+
+func respawn_player():
+	global_position = respawn_position
+	velocity = Vector3.ZERO
 
 #endregion
