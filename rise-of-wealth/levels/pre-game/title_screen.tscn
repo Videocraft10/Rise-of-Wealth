@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cvw8y5qw4ypwu"]
 
-[ext_resource type="Script" path="res://title_screen.gd" id="1_x7wlm"]
+[ext_resource type="Script" uid="uid://8dbao7pk5hux" path="res://levels/pre-game/title_screen.gd" id="1_x7wlm"]
 
 [node name="TitleScreen" type="Control"]
 layout_mode = 3
