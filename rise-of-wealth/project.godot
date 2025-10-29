@@ -10,9 +10,13 @@ config_version=5
 
 [application]
 
-config/name="Rise of Wealth"
-run/main_scene="uid://dxbqyntkxttjk"
+config/name="Career Quest"
+run/main_scene="res://scenes/career_quest/career_quest_title.tscn"
 config/features=PackedStringArray("4.5", "Forward Plus")
+
+[autoload]
+
+GameManager="*res://scripts/autoload/game_manager.gd"
 
 [display]
 
