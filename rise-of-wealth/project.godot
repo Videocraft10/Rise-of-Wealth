@@ -1,0 +1,23 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Rise of Wealth"
+config/features=PackedStringArray("4.5", "Forward Plus")
+
+[file_customization]
+
+folder_colors={
+"res://3D/": "purple",
+"res://3D/blueprints/": "blue",
+"res://3D/levels/": "red",
+"res://3D/materials/": "green"
+}
