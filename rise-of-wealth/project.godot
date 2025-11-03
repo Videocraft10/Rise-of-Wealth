@@ -13,6 +13,10 @@ config_version=5
 config/name="Rise of Wealth"
 config/features=PackedStringArray("4.5", "Forward Plus")
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/asset_placer/plugin.cfg", "res://addons/godot_super-wakatime/plugin.cfg", "res://addons/godotversionupdater/plugin.cfg")
+
 [file_customization]
 
 folder_colors={
