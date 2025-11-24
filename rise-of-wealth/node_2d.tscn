@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://dxbqyntkxttjk"]
+[gd_scene load_steps=27 format=3 uid="uid://dxbqyntkxttjk"]
 
 [ext_resource type="Script" uid="uid://8prr6i628ryw" path="res://character_body_2d.gd" id="1_0e48y"]
 [ext_resource type="Texture2D" uid="uid://c5dspkh8imaro" path="res://RuULUq (1).png" id="2_0hol4"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://yxmtfvvrruo2" path="res://Tilemap/tilemap.png" id="3_0hol4"]
 [ext_resource type="Texture2D" uid="uid://bvv2h0k6qr2qg" path="res://Tilemap/tilemap_packed.png" id="4_q6r6c"]
 [ext_resource type="Texture2D" uid="uid://dpdix2te7huur" path="res://RuULUq (3).png" id="6_kdubu"]
+[ext_resource type="PackedScene" uid="uid://cdtol8ipvi76b" path="res://pause_menu.tscn" id="7_d21ai"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_q6r6c"]
 atlas = ExtResource("2_0hol4")
@@ -698,3 +699,5 @@ scale = Vector2(0.92578125, 1)
 sprite_frames = SubResource("SpriteFrames_rjqkl")
 animation = &"idle mom"
 frame_progress = 0.42687902
+
+[node name="PauseMenu" parent="." instance=ExtResource("7_d21ai")]

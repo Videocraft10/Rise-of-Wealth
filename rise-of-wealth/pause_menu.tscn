@@ -1,0 +1,66 @@
+[gd_scene load_steps=2 format=3 uid="uid://cdtol8ipvi76b"]
+
+[ext_resource type="Script" uid="uid://c3u0hf81pvyni" path="res://canvas_layer.gd" id="1_hdmo1"]
+
+[node name="PauseMenu" type="Node2D"]
+position = Vector2(44, 23)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+script = ExtResource("1_hdmo1")
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 44.0
+offset_top = 23.0
+offset_right = 84.0
+offset_bottom = 63.0
+metadata/_edit_use_anchors_ = true
+
+[node name="Panel" type="Panel" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 6.55
+anchor_top = -0.525
+anchor_right = 17.35
+anchor_bottom = 12.25
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(1.1629068, 1.2000012)
+metadata/_edit_use_anchors_ = true
+
+[node name="ResumeButton" type="Button" parent="CanvasLayer/Control/Panel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.29878372
+anchor_top = 0.6473072
+anchor_right = 0.40264812
+anchor_bottom = 0.7839045
+offset_right = 2.9106598
+offset_bottom = -0.26501465
+rotation = -1.5683241
+scale = Vector2(1, 2.6670618)
+metadata/_edit_use_anchors_ = true
+
+[node name="QuitButton" type="Button" parent="CanvasLayer/Control/Panel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.30971488
+anchor_top = 0.48226142
+anchor_right = 0.39825734
+anchor_bottom = 0.60090405
+offset_top = 0.10699463
+offset_right = 0.2079773
+offset_bottom = -0.26500034
+rotation = -1.5713809
+scale = Vector2(1.140657, 2.998643)
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="CanvasLayer/Control/Panel"]
+layout_mode = 0
+offset_left = 122.967735
+offset_top = 69.99994
+offset_right = 217.96774
+offset_bottom = 92.99994
+scale = Vector2(2.5630846, 2.3289628)
+text = "Pause Menu"
