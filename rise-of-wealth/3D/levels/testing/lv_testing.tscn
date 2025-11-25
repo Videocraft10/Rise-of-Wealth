@@ -1,9 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://d1kqh6q6ksxxu"]
-
-[ext_resource type="Material" uid="uid://7m53gvamqhxa" path="res://3D/materials/prototype/M_ProtoBaseplate.tres" id="1_8hceb"]
-
-[node name="lv_testing" type="Node3D"]
-
-[node name="CSGBox3D" type="CSGBox3D" parent="."]
-material_override = ExtResource("1_8hceb")
-size = Vector3(100, 1, 100)
