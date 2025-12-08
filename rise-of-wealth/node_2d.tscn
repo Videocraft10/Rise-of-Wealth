@@ -701,3 +701,8 @@ animation = &"idle mom"
 frame_progress = 0.42687902
 
 [node name="PauseMenu" parent="." instance=ExtResource("7_d21ai")]
+position = Vector2(1781, 436)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(498, -53.999996)
+scale = Vector2(5.647558, 35.154747)
