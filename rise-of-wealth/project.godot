@@ -13,3 +13,10 @@ config_version=5
 config/name="Rise of Wealth"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
+
+[file_customization]
+
+folder_colors={
+"res://2D/": "orange",
+"res://3D/": "purple"
+}
