@@ -1,19 +1,27 @@
 extends CharacterBody2D
 
 var speed = 200
+var gravity = 900        # Pixels per second squared
+var jump_velocity = -400 # Negative because up is negative in Godot
 
 func _physics_process(delta):
 	var input_vector = Vector2.ZERO
 	
-	# Get WASD / arrow key input
+	# Horizontal input
 	input_vector.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
-	input_vector.y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
+	velocity.x = input_vector.x * speed
 	
-	# Normalize vector for diagonal movement
-	input_vector = input_vector.normalized()
+	# Gravity (always pulls down if not on floor)
+	if not is_on_floor():
+		velocity.y += gravity * delta
+	else:
+		velocity.y = 0  # Reset vertical velocity when on floor
+		
+		# Jump
+		if Input.is_action_just_pressed("ui_accept"):
+			velocity.y = jump_velocity
 	
 	# Move the player
-	velocity = input_vector * speed
 	move_and_slide()
 	
 	update_animation(input_vector)
@@ -21,7 +29,9 @@ func _physics_process(delta):
 
 
 func update_animation(input_vector: Vector2):
-	if input_vector.length() > 0:
+	if not is_on_floor():
+		$AnimatedSprite2D.play("jump")  # Optional jump animation
+	elif input_vector.length() > 0:
 		$AnimatedSprite2D.play("run")
 	else:
 		$AnimatedSprite2D.play("idle")
