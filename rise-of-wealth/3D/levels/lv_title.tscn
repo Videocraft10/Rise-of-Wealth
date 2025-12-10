@@ -1,0 +1,45 @@
+[gd_scene load_steps=5 format=3 uid="uid://ci6v2yfkrya8q"]
+
+[ext_resource type="VoxelGIData" uid="uid://cmu3s87wfwr4s" path="res://Bake/lv_title.VoxelGI_data.res" id="1_h26g7"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_uqtq2"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_gibh3"]
+sky_material = SubResource("ProceduralSkyMaterial_uqtq2")
+
+[sub_resource type="Environment" id="Environment_lix17"]
+background_mode = 2
+background_energy_multiplier = 0.0
+sky = SubResource("Sky_gibh3")
+tonemap_mode = 2
+glow_enabled = true
+
+[node name="title" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_lix17")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, -3.877451)
+shadow_enabled = true
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9337136, 2.909305, 0.96199226)
+size = Vector3(5.0439453, 7.035919, 7.7722473)
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="CSGBox3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.011657715, -0.040672302, 0.012191772)
+operation = 2
+size = Vector3(2.906128, 1.6658783, 2.1855774)
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="CSGBox3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2516174, 1.868681, 0.8840256)
+operation = 2
+size = Vector3(0.4262085, 5.484585, 0.4419098)
+
+[node name="VoxelGI" type="VoxelGI" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0088525, 0.5157976, 0.5789325)
+visible = false
+data = ExtResource("1_h26g7")
