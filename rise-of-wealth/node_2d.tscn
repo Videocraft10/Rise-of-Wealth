@@ -1,0 +1,48 @@
+[gd_scene load_steps=4 format=3 uid="uid://dxbqyntkxttjk"]
+
+[ext_resource type="Texture2D" uid="uid://c1w6xvv3ggiyg" path="res://icon.svg" id="1_epypp"]
+[ext_resource type="Script" uid="uid://botmf3sj0lhm8" path="res://start.gd" id="2_0hol4"]
+[ext_resource type="Script" uid="uid://b0mgior1mmypu" path="res://quit.gd" id="3_q6r6c"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(28.772264, 16.180454)
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+scale = Vector2(0.3173655, 0.3181011)
+texture = ExtResource("1_epypp")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 15.222994
+offset_top = 3.0901484
+offset_right = 90.22299
+offset_bottom = 26.090149
+scale = Vector2(0.12502837, 0.3081016)
+text = "Job Quest"
+
+[node name="Start" type="Button" parent="."]
+layout_mode = 0
+offset_left = 5.734689
+offset_top = 21.69284
+offset_right = 50.734688
+offset_bottom = 52.69284
+scale = Vector2(0.12295993, 0.15940633)
+text = "start"
+script = ExtResource("2_0hol4")
+
+[node name="Quit" type="Button" parent="."]
+layout_mode = 0
+offset_left = 26.796638
+offset_top = 21.754644
+offset_right = 65.79664
+offset_bottom = 52.754646
+scale = Vector2(0.12295993, 0.15940633)
+text = "quit"
+script = ExtResource("3_q6r6c")
